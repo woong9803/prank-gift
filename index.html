@@ -45,22 +45,33 @@
 
         #message {
             display: none;
-            font-size: clamp(5rem, 25vw, 12rem);
+            font-size: clamp(2rem, 10vw, 5rem);
             font-weight: 900;
-            color: var(--text-color);
+            color: #2ecc71;
             word-break: keep-all;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             user-select: none;
+            z-index: 100;
+            position: relative;
+        }
+
+        .money {
+            position: fixed;
+            top: -50px;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 99;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
         }
 
         @keyframes bounce {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-20px) scale(1.05); }
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
         }
 
         .hidden {
@@ -76,7 +87,7 @@
 
     <div id="container">
         <div id="gift">🎁</div>
-        <div id="message">겠노?</div>
+        <div id="message">대박 기원! 💰</div>
     </div>
 
     <script>
@@ -84,19 +95,47 @@
         const gift = document.getElementById('gift');
         const message = document.getElementById('message');
 
+        function createMoney() {
+            const currencies = ['💵', '💰', '💸', '🪙', '💎'];
+            const money = document.createElement('div');
+            money.className = 'money';
+            money.innerText = currencies[Math.floor(Math.random() * currencies.length)];
+            
+            const startX = Math.random() * window.innerWidth;
+            const duration = Math.random() * 2 + 1;
+            const size = Math.random() * 2 + 1;
+            
+            money.style.left = startX + 'px';
+            money.style.animationDuration = duration + 's';
+            money.style.fontSize = size + 'rem';
+            money.style.opacity = Math.random();
+            
+            document.body.appendChild(money);
+            
+            setTimeout(() => {
+                money.remove();
+            }, duration * 1000);
+        }
+
         container.addEventListener('click', () => {
             if (gift.classList.contains('hidden')) return;
 
-            // Vibrate if supported (for extra prank effect on mobile)
             if (window.navigator.vibrate) {
-                window.navigator.vibrate(200);
+                window.navigator.vibrate([100, 50, 100, 50, 200]);
             }
 
             gift.classList.add('hidden');
             message.classList.add('show');
             
-            // Change background to something more "alerting"
-            document.body.style.background = '#ffffff';
+            document.body.style.background = '#fff';
+            
+            // Start money rain
+            for(let i = 0; i < 100; i++) {
+                setTimeout(createMoney, i * 50);
+            }
+            
+            // Continuous rain
+            setInterval(createMoney, 100);
         });
     </script>
 </body>
