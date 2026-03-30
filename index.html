@@ -5,12 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>선물이 도착했습니다!</title>
     <style>
-        :root {
-            --bg-color: #f0f2f5;
-            --accent-color: #ff4757;
-            --text-color: #2f3542;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -33,28 +27,30 @@
         #container {
             text-align: center;
             cursor: pointer;
+            user-select: none;
+        }
+
+        .emoji {
+            font-size: clamp(8rem, 40vw, 15rem);
+            display: block;
             transition: transform 0.2s active;
         }
 
         #gift {
-            font-size: clamp(8rem, 40vw, 15rem);
-            display: block;
             animation: bounce 2s infinite ease-in-out;
-            user-select: none;
         }
 
-        #message {
+        #money {
             display: none;
-            font-size: clamp(2rem, 10vw, 5rem);
-            font-weight: 900;
-            color: #2ecc71;
-            word-break: keep-all;
-            user-select: none;
-            z-index: 100;
-            position: relative;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .money {
+        #poop {
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .money-rain {
             position: fixed;
             top: -50px;
             font-size: 2rem;
@@ -74,6 +70,11 @@
             50% { transform: translateY(-20px) scale(1.05); }
         }
 
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         .hidden {
             display: none !important;
         }
@@ -86,56 +87,65 @@
 <body>
 
     <div id="container">
-        <div id="gift">🎁</div>
-        <div id="message">대박 기원! 💰</div>
+        <div id="gift" class="emoji">🎁</div>
+        <div id="money" class="emoji">💰</div>
+        <div id="poop" class="emoji">💩</div>
     </div>
 
     <script>
-        const container = document.getElementById('container');
         const gift = document.getElementById('gift');
-        const message = document.getElementById('message');
+        const money = document.getElementById('money');
+        const poop = document.getElementById('poop');
 
         function createMoney() {
             const currencies = ['💵', '💰', '💸', '🪙', '💎'];
-            const money = document.createElement('div');
-            money.className = 'money';
-            money.innerText = currencies[Math.floor(Math.random() * currencies.length)];
+            const el = document.createElement('div');
+            el.className = 'money-rain';
+            el.innerText = currencies[Math.floor(Math.random() * currencies.length)];
             
             const startX = Math.random() * window.innerWidth;
             const duration = Math.random() * 2 + 1;
             const size = Math.random() * 2 + 1;
             
-            money.style.left = startX + 'px';
-            money.style.animationDuration = duration + 's';
-            money.style.fontSize = size + 'rem';
-            money.style.opacity = Math.random();
+            el.style.left = startX + 'px';
+            el.style.animationDuration = duration + 's';
+            el.style.fontSize = size + 'rem';
+            el.style.opacity = Math.random();
             
-            document.body.appendChild(money);
-            
-            setTimeout(() => {
-                money.remove();
-            }, duration * 1000);
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), duration * 1000);
         }
 
-        container.addEventListener('click', () => {
-            if (gift.classList.contains('hidden')) return;
-
+        gift.addEventListener('click', () => {
+            gift.classList.add('hidden');
+            money.classList.add('show');
+            
             if (window.navigator.vibrate) {
-                window.navigator.vibrate([100, 50, 100, 50, 200]);
+                window.navigator.vibrate([100, 50, 100]);
             }
 
-            gift.classList.add('hidden');
-            message.classList.add('show');
-            
-            document.body.style.background = '#fff';
-            
             // Start money rain
-            for(let i = 0; i < 100; i++) {
+            for(let i = 0; i < 50; i++) {
                 setTimeout(createMoney, i * 50);
             }
+            window.moneyInterval = setInterval(createMoney, 150);
+        });
+
+        money.addEventListener('click', () => {
+            money.classList.remove('show');
+            money.classList.add('hidden');
+            poop.classList.add('show');
             
-            // Continuous rain
-            setInterval(createMoney, 100);
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate(500);
+            }
+
+            // Stop the money rain when poop appears
+            if (window.moneyInterval) {
+                clearInterval(window.moneyInterval);
+            }
+            
+            document.body.style.background = '#f0e4d7'; // Slight color change for poop
         });
     </script>
 </body>
