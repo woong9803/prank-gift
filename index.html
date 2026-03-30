@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>선물이 도착했습니다!</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --accent-color: #ff4757;
+            --text-color: #2f3542;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            width: 100%;
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        #container {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s active;
+        }
+
+        #gift {
+            font-size: clamp(8rem, 40vw, 15rem);
+            display: block;
+            animation: bounce 2s infinite ease-in-out;
+            user-select: none;
+        }
+
+        #message {
+            display: none;
+            font-size: clamp(5rem, 25vw, 12rem);
+            font-weight: 900;
+            color: var(--text-color);
+            word-break: keep-all;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .show {
+            display: block !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <div id="gift">🎁</div>
+        <div id="message">겠노?</div>
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const gift = document.getElementById('gift');
+        const message = document.getElementById('message');
+
+        container.addEventListener('click', () => {
+            if (gift.classList.contains('hidden')) return;
+
+            // Vibrate if supported (for extra prank effect on mobile)
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate(200);
+            }
+
+            gift.classList.add('hidden');
+            message.classList.add('show');
+            
+            // Change background to something more "alerting"
+            document.body.style.background = '#ffffff';
+        });
+    </script>
+</body>
+</html>
